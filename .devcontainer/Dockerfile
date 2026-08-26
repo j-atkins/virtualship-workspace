@@ -1,4 +1,4 @@
-FROM ghcr.io/prefix-dev/pixi:latest
+FROM ghcr.io/prefix-dev/pixi:v0.70.0 # pin pixi to avoid breaking changes
 
 WORKDIR /workspace
 
