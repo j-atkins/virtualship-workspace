@@ -1,0 +1,144 @@
+[build-system]
+requires = ["setuptools>=61.0", "setuptools_scm>=8.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "virtualship"
+description = "Code for VirtualShip, where Marine Scientists can combine Copernicus Marine Data with a Parcels ship to go on a virtual expedition."
+readme = "README.md"
+dynamic = ["version"]
+authors = [{ name = "parcels-code.org team" }]
+requires-python = ">=3.11"
+license = { file = "LICENSE" }
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+    "Operating System :: OS Independent",
+    "Topic :: Scientific/Engineering",
+    "Topic :: Education",
+    "Intended Audience :: Education",
+]
+dependencies = [
+    "click",
+    "pyproj>=3,<4",
+    "sortedcontainers==2.4.0",
+    "opensimplex==0.4.5",
+    "numpy>=2.1.0",
+    "pydantic>=2,<3",
+    "pyyaml",
+    "copernicusmarine>=2.2.2",
+    "yaspin",
+    "textual",
+]
+
+[project.urls]
+Homepage = "https://virtualship.parcels-code.org/"
+Repository = "https://github.com/Parcels-code/virtualship"
+Documentation = "https://virtualship.readthedocs.io/"
+"Bug Tracker" = "https://github.com/Parcels-code/virtualship/issues"
+Changelog = "https://github.com/Parcels-code/virtualship/releases"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+virtualship = ["*.yaml"]
+
+[tool.setuptools_scm]
+version_file = "src/virtualship/_version_setup.py"
+local_scheme = "no-local-version"
+
+[project.scripts]
+virtualship = "virtualship.cli.main:cli"
+
+[tool.pytest.ini_options]
+minversion = "6.0"
+addopts = ["-ra", "--showlocals", "--strict-markers", "--strict-config"]
+xfail_strict = true
+filterwarnings = [
+  "error",
+  "default::DeprecationWarning",
+  "error::DeprecationWarning:virtualship",
+  "ignore:ParticleSet is empty.*:RuntimeWarning", # TODO: Probably should be ignored in the source code
+  "ignore:This is an alpha version of Parcels v4.*:UserWarning", # TODO: necessary whilst Parcels v4 is still alpha
+  "ignore:numpy.ndarray size changed:RuntimeWarning" # TODO: annoying incompatability issue with pixi env, see if fixed when relying on a Parcels v4 release rather than pulling from main
+]
+log_cli_level = "INFO"
+testpaths = [
+  "tests",
+]
+
+[tool.coverage.run]
+source = ["virtualship"]
+
+[tool.coverage.report]
+exclude_also = [
+  '\.\.\.',
+  'if typing.TYPE_CHECKING:',
+]
+
+[tool.ruff.lint]
+exclude = ["*.ipynb"]
+
+select = [
+    "E",  # Error
+    "F",  # pyflakes
+    "I",  # isort
+    "D", # pydocstyle
+    "DOC", # pydoclint
+    "B",  # Bugbear
+    "UP", # pyupgrade
+    "ICN", # import conventions
+    "RUF", # ruff
+    "ISC001", # single-line-implicit-string-concatenation
+    "TID", # flake8-tidy-imports
+]
+ignore = [
+    # line too long (82 > 79 characters)
+    "E501",
+    # consider `[meta, header, *data]` instead of concatenation
+    "RUF005",
+    # Use `X | Y` in `isinstance` call instead of `(X, Y)`
+    "UP038",
+    # multi-line-summary-first-line
+    "D212",
+    # one-blank-line-before-class
+    "D203",
+    # First line of docstring should be in imperative mood
+    "D401",
+
+    # TODO: Remove later
+    "D100", "D103"
+]
+
+[tool.mypy]
+files = ['src']
+disable_error_code = "import-untyped"
+check_untyped_defs = true
+show_error_context = true
+warn_redundant_casts = true
+warn_unused_configs = true
+warn_unused_ignores = true
+
+exclude = [
+  # Temporarily exclude files. As we improve typechecking across the codebase, remove these
+  "src/virtualship/cli/_plan.py",
+  "src/virtualship/cli/_run.py",
+  "src/virtualship/cli/commands.py",
+  "src/virtualship/cli/validator_utils.py",
+  "src/virtualship/expedition/simulate_schedule.py",
+  "src/virtualship/instruments/adcp.py",
+  "src/virtualship/instruments/argo_float.py",
+  "src/virtualship/instruments/base.py",
+  "src/virtualship/instruments/ctd.py",
+  "src/virtualship/instruments/drifter.py",
+  "src/virtualship/instruments/ship_underwater_st.py",
+  "src/virtualship/instruments/xbt.py",
+  "src/virtualship/make_realistic/problems/simulator.py",
+  "src/virtualship/models/checkpoint.py",
+  "src/virtualship/models/expedition.py",
+  "src/virtualship/utils.py",
+]
