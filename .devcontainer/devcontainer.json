@@ -3,11 +3,12 @@
   "build": {
     "dockerfile": "Dockerfile"
   },
+  "updateContentCommand": "pixi install",
   "customizations": {
     "vscode": {
       "settings": {
-        "python.defaultInterpreterPath": "/workspace/.pixi/envs/default/bin/python",
-        "terminal.integrated.defaultProfile.linux": "bash"
+        "python.defaultInterpreterPath": "${workspaceFolder}/.pixi/envs/default/bin/python",
+        "python.terminal.activateEnvironment": true
       },
       "extensions": [
         "ms-python.python",
@@ -16,6 +17,6 @@
       ]
     }
   },
-  "postCreateCommand": "pixi run --environment default python -c 'import virtualship; print(\"VirtualShip environment ready!\")'",
+  "postCreateCommand": "pixi run python -c 'import virtualship; print(\"VirtualShip environment ready!\")'",
   "remoteUser": "root"
 }
