@@ -3,20 +3,19 @@
   "build": {
     "dockerfile": "Dockerfile"
   },
-  "updateContentCommand": "pixi install",
+  "postCreateCommand": "pip install git+https://github.com/Parcels-code/virtualship.git",
   "customizations": {
     "vscode": {
       "settings": {
-        "python.defaultInterpreterPath": "${workspaceFolder}/.pixi/envs/default/bin/python",
+        "python.defaultInterpreterPath": "/opt/venv/bin/python",
         "python.terminal.activateEnvironment": true
       },
       "extensions": [
         "ms-python.python",
-        "ms-toolsai.jupyter",
-        "ms-python.vscode-pylance"
+        "ms-python.vscode-pylance",
+        "ms-toolsai.jupyter"
       ]
     }
   },
-  "postCreateCommand": "pixi run python -c 'import virtualship; print(\"VirtualShip environment ready!\")'",
   "remoteUser": "root"
 }
