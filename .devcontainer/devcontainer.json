@@ -1,3 +1,4 @@
+// TODO: ideally rely on a stable release of Parcels v4, but for now pull from GitHub
 {
   "name": "VirtualShip Workspace",
   "build": {
