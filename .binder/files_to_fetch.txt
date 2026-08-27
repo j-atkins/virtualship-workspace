@@ -1,0 +1,6 @@
+docs/user-guide/tutorials/CTD_transects.ipynb
+docs/user-guide/tutorials/Drifter_data_tutorial.ipynb
+docs/user-guide/tutorials/Argo_data_tutorial.ipynb
+docs/user-guide/tutorials/ADCP_transects.ipynb
+docs/user-guide/tutorials/xbt_plotting.ipynb
+docs/user-guide/tutorials/Ship_underwater_ST_plotting.ipynb

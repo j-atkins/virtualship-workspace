@@ -1,0 +1,49 @@
+#!/usr/bin/env bash
+set -e
+
+REPO_OWNER="Parcels-code"
+REPO_NAME="virtualship"
+BRANCH="main"
+LIST_FILE=".binder/files_to_fetch.txt"
+ISSUES_URL="https://github.com/$REPO_OWNER/$REPO_NAME/issues"
+
+# target directory for downloaded tutorials
+TARGET_DIR="tutorials"
+
+# ensure the main tutorials directory exists
+mkdir -p "$TARGET_DIR"
+
+while IFS= read -r file_path || [ -n "$file_path" ]; do
+  # skip empty lines or comments
+  [[ -z "$file_path" || "$file_path" =~ ^# ]] && continue
+
+  RAW_URL="https://raw.githubusercontent.com/$REPO_OWNER/$REPO_NAME/$BRANCH/$file_path"
+  
+  # extract filename to place it inside the tutorials directory
+  FILENAME=$(basename "$file_path")
+  DEST_PATH="$TARGET_DIR/$FILENAME"
+
+  echo "Fetching: $file_path -> $DEST_PATH ..."
+  
+  # fetch file and alert of failure
+  HTTP_STATUS=$(curl -s -w "%{http_code}" -o "$DEST_PATH" "$RAW_URL")
+  
+  if [ "$HTTP_STATUS" -ne 200 ]; then
+    rm -f "$DEST_PATH"
+    
+    echo ""
+    echo "=================================================================="
+    echo " ERROR: Required file could not be found!"
+    echo " Failed to download: $file_path (HTTP $HTTP_STATUS)"
+    echo " URL attempted: $RAW_URL"
+    echo ""
+    echo " Please report this broken build on the VirtualShip issue tracker:"
+    echo " -> $ISSUES_URL"
+    echo "=================================================================="
+    echo ""
+    
+    exit 1
+  fi
+done < "$LIST_FILE"
+
+echo "All requested files successfully saved into the '$TARGET_DIR/' directory."
