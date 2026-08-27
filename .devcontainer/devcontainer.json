@@ -19,3 +19,5 @@
   },
   "remoteUser": "root"
 }
+
+// TODO: add a shorter idle/timeout default?
