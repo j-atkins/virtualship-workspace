@@ -4,11 +4,11 @@ Repository dedicated to hosting a VirtualShip workspace.
 
 ## Workspace for VirtualShip simulations - GitHub Codespaces
 
-_[This section is under construction]_
+_[More information to follow...]_
 
 ## Workspace for VirtualShip post-processing - Binder
 
-_[This section is under construction]_
+_[More information to follow...]_
 
 Click the button below to launch a VirtualShip post-processing workspace in your browser using Binder:
 
