@@ -6,13 +6,12 @@ on:
     paths:
       - '.binder/files_to_fetch.txt'
   pull_request:
+    types: [ opened, synchronize, reopened ]
     branches: [ main ]
-    paths:
-      - '.binder/files_to_fetch.txt'
   schedule:
-    # run every Monday at 08:00 UTC to catch stale links automatically
+    # run every Monday at 08:00 UTC to catch broken links automatically
     - cron: '0 8 * * 1'
-  workflow_dispatch: # allow manual triggering from the GitHub Actions tab
+  workflow_dispatch: # allow manual triggering from the Actions tab
 
 jobs:
   test-notebook-links:
