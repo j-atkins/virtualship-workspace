@@ -2,13 +2,14 @@ from pathlib import Path
 import urllib.request
 import urllib.error
 import pytest
+import yaml
 
-REPO_OWNER = "Parcels-code"
-REPO_NAME = "virtualship"
-BRANCH = "main"
+CONFIG_PATH = Path(__file__).parent.parent / ".binder" / "config.yaml"
 
-# path to the list file relative to the repository root
-LIST_FILE = Path(__file__).parent.parent / ".binder" / "files_to_fetch.txt"
+with open(CONFIG_PATH, "r", encoding="utf-8") as f:
+    CONFIG = yaml.safe_load(f)
+
+LIST_FILE = Path(__file__).parent.parent / CONFIG["files_to_fetch_path"]
 
 
 def get_target_files():
@@ -27,8 +28,13 @@ def get_target_files():
 
 @pytest.mark.parametrize("file_path", get_target_files())
 def test_remote_notebook_exists(file_path):
-    """Sends a HEAD request to verify each notebook URL is active (HTTP 200)."""
-    raw_url = f"https://raw.githubusercontent.com/{REPO_OWNER}/{REPO_NAME}/{BRANCH}/{file_path}"
+    """Test each notebook URL is active."""
+    repo_owner = CONFIG["repo_owner"]
+    repo_name = CONFIG["repo_name"]
+    branch = CONFIG["branch"]
+    files_to_fetch_path = CONFIG["files_to_fetch_path"]
+
+    raw_url = f"https://raw.githubusercontent.com/{repo_owner}/{repo_name}/{branch}/{file_path}"
 
     req = urllib.request.Request(raw_url, method="HEAD")
 
@@ -42,8 +48,8 @@ def test_remote_notebook_exists(file_path):
             f"Failed to reach notebook at '{file_path}'.\n"
             f"URL: {raw_url}\n"
             f"HTTP Error: {e.code} {e.reason}\n"
-            f"Please update '.binder/files_to_fetch.txt' or report on the issue tracker: "
-            f"https://github.com/{REPO_OWNER}/{REPO_NAME}/issues"
+            f"Please update '{files_to_fetch_path}' or report on the issue tracker: "
+            f"https://github.com/{repo_owner}/{repo_name}/issues"
         )
     except urllib.error.URLError as e:
         pytest.fail(f"Network error while connecting to {raw_url}: {e.reason}")

@@ -1,31 +1,27 @@
 #!/usr/bin/env bash
 set -e
 
-REPO_OWNER="Parcels-code"
-REPO_NAME="virtualship"
-BRANCH="main"
-LIST_FILE=".binder/files_to_fetch.txt"
-ISSUES_URL="https://github.com/$REPO_OWNER/$REPO_NAME/issues"
+CONFIG_FILE=".binder/config.yaml"
 
-# target directory for downloaded tutorials
+REPO_OWNER=$(grep '^repo_owner:' "$CONFIG_FILE" | awk '{print $2}' | tr -d '"')
+REPO_NAME=$(grep '^repo_name:' "$CONFIG_FILE" | awk '{print $2}' | tr -d '"')
+BRANCH=$(grep '^branch:' "$CONFIG_FILE" | awk '{print $2}' | tr -d '"')
+LIST_FILE=$(grep '^files_to_fetch_path:' "$CONFIG_FILE" | awk '{print $2}' | tr -d '"')
+
+ISSUES_URL="https://github.com/$REPO_OWNER/$REPO_NAME/issues"
 TARGET_DIR="tutorials"
 
-# ensure the main tutorials directory exists
 mkdir -p "$TARGET_DIR"
 
 while IFS= read -r file_path || [ -n "$file_path" ]; do
-  # skip empty lines or comments
   [[ -z "$file_path" || "$file_path" =~ ^# ]] && continue
 
   RAW_URL="https://raw.githubusercontent.com/$REPO_OWNER/$REPO_NAME/$BRANCH/$file_path"
-  
-  # extract filename to place it inside the tutorials directory
   FILENAME=$(basename "$file_path")
   DEST_PATH="$TARGET_DIR/$FILENAME"
 
   echo "Fetching: $file_path -> $DEST_PATH ..."
   
-  # fetch file and alert of failure
   HTTP_STATUS=$(curl -s -w "%{http_code}" -o "$DEST_PATH" "$RAW_URL")
   
   if [ "$HTTP_STATUS" -ne 200 ]; then
@@ -45,5 +41,3 @@ while IFS= read -r file_path || [ -n "$file_path" ]; do
     exit 1
   fi
 done < "$LIST_FILE"
-
-echo "All requested files successfully saved into the '$TARGET_DIR/' directory."
